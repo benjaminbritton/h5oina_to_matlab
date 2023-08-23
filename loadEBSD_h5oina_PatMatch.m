@@ -328,11 +328,11 @@ for k = 1 :length(EBSD_index) % TODO: find a good way to write out multiple data
 end
 
 % sort extra parts
-ebsd.prop.CrossCorr=DPdata3.Cross_Correlation_Coefficient;
-ebsd.prop.Band_Contrast=ebsdOrig.prop.Band_Contrast;
-ebsd.prop.Band_Slope=ebsdOrig.prop.Band_Slope;
-ebsd.prop.Pattern_Quality=ebsdOrig.prop.Pattern_Quality;
-ebsd.prop.X=ebsdOrig.prop.X;
-ebsd.prop.Y=ebsdOrig.prop.Y;
+ebsdDP.prop.CrossCorr=DPdata3.Cross_Correlation_Coefficient;
+ebsdDP.prop.Band_Contrast=ebsdOrig.prop.Band_Contrast;
+ebsdDP.prop.Band_Slope=ebsdOrig.prop.Band_Slope;
+ebsdDP.prop.Pattern_Quality=ebsdOrig.prop.Pattern_Quality;
+ebsdDP.prop.X=ebsdOrig.prop.X;
+ebsdDP.prop.Y=ebsdOrig.prop.Y;
 
 end
