@@ -1,12 +1,12 @@
-function [ebsd_original,dataset_header,ebsd_patternmatched] = load_h5oina_pm(fname_slice_data,fname_folder,mtex_location)
+function [ebsd_original,dataset_header,ebsd_patternmatched,h5_original,h5_patternmatch] = load_h5oina_pm(fname_slice_data,fname_folder,mtex_location,astro_location)
 % LOAD_H5OINA_PM Loads h5oina data, and pattern matched data
 % pattern matched data should be in the same folder and with the file name of the original
 % but an additional '-PatternMatching' appended before the
-% 
+%
 % [ebsd_original,dataset_header,ebsd_patternmatched] = load_h5oina_pm(fname_slice_data,fname_folder,mtex_location)
 %
 % INPUTS
-% fname_slice_data = h5oina name of 1 slice, 
+% fname_slice_data = h5oina name of 1 slice,
 % excluding the folder and h5oina extension
 % fname_folder = folder location of the h5oina file
 % mtex_location = location of mtex 5.8.1
@@ -16,12 +16,21 @@ function [ebsd_original,dataset_header,ebsd_patternmatched] = load_h5oina_pm(fna
 % ebsd_patternmatched = patternmatched container, if the pattern matching exists
 % [if this does not exist, then it will just be a copy of the original]
 % dataset_header = header data from the ebsd file
+%
+% optional
+% h5_original = h5 original file path
+% h5_patternmatch = h5_pattern match file path
 
 %start mtex if needed
 try EBSD;
 catch
+    run(fullfile(mtex_location,"startup.m"));
+end
 
-run(fullfile(mtex_location,"startup.m"));
+%start astro if needed
+try astro_loadcheck
+catch
+    run(fullfile(astro_location,"start_AstroEBSD.m"));
 end
 
 %do not change unless you really need to
@@ -53,7 +62,7 @@ if pm_data == 1
 end
 
 % create header
-dataset_header=ebsd_o.opt.Header;                                   
+dataset_header=ebsd_o.opt.Header;
 
 ebsd_original=ebsd_o;
 
