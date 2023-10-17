@@ -7,7 +7,7 @@ EBSP_PW=double(dataset_header.Pattern_Width);
 EBSP_PH=double(dataset_header.Pattern_Height);
 % loc=header.fileloc;
 % fname=header.fname;
-Pat = [h5info(fname).Groups.Name '/EBSD/Data/Processed Patterns'];
+Pat = [h5info(fname).Groups(1).Name '/EBSD/Data/Processed Patterns'];
 
 EBSDpat=double((rot90(shiftdim(h5read(fname,Pat,[1 1 pattern_number],[EBSP_PW EBSP_PH 1])))));
 

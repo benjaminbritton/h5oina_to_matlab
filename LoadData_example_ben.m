@@ -1,8 +1,9 @@
 % Example use of the h5oinA loading script
 
 %folder that contains the h5oina files, 
-% e.g. fname_folder='C:\Users\benja\OneDrive\Documents\MATLAB\h5oina';
-fname_folder='C:\Users\benja\OneDrive\Documents\MATLAB\h5oina';
+% % e.g. fname_folder='C:\Users\benja\OneDrive\Documents\MATLAB\h5oina';
+% fname_folder='C:\Users\benja\OneDrive\Documents\MATLAB\h5oina';
+fname_folder='H:\Ben';
 
 %h5oina file, excluding final file extension & folder
 %if the '-PatternMatched' version exists, the script will also load that data
@@ -12,8 +13,11 @@ fname_slice_data='Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161';
 %location of MTEX 5.8.1
 %if MTEX loaded this doesn't matter
 %if MTEX is not loaded, then it will start MTEX up
-mtex_location='C:\Users\benja\OneDrive\Documents\MATLAB\mtex-5.8.1'; %working with 5.8.1
-astro_location='C:\Users\benja\OneDrive\Documents\Github\AstroEBSD_v2'; %working with 5.8.1
+% mtex_location='C:\Users\benja\OneDrive\Documents\MATLAB\mtex-5.8.1'; %working with 5.8.1
+mtex_location='H:\MTEX\mtex-5.8.1'; %working with 5.8.1
+
+% astro_location='C:\Users\benja\OneDrive\Documents\Github\AstroEBSD_v2'; %working with 5.8.1
+astro_location='C:\Users\rmb07\Documents\GitHub\AstroEBSD_v2';
 
 % run(fullfile(InputUser.Astro_loc,"start_AstroEBSD.m"));
 RTM.Phase_Folder = fullfile(astro_location,'phases'); %location of the AstroEBSD phases super-folder
@@ -283,4 +287,47 @@ toc
 save data1
 %%
 
+%fix a broken analysis
+pattern_number=101895; %central region
+% pattern_number=43506; %above
 
+RTM.LPTsize=88*2;
+
+SettingsXCF_noH=SettingsXCF;
+% SettingsXCF_noH.hfilter=ones(size(SettingsXCF.hfilter));
+gmatrix_mtex_new=ebsd_patternmatched(pattern_number).orientations.matrix;
+g_new=gmatrix_mtex_new'*g_tilt*g_camera';
+
+[Pat_Exp]=loadEBSP_T(h5_original,dataset_header,pattern_number);
+%correct the experiment
+[ Pat_exp_cor ] = EBSP_BGCor( Pat_Exp,Settings_CorX);
+
+%sort out the PC
+PC_pattern_OI=[PC_x_array(pattern_number), PC_y_array(pattern_number) ,PC_z_array(pattern_number)];
+[PC_pattern_Astro,PatternInfo] = PC_OI_to_Astro(PC_pattern_OI,dataset_header);
+
+PC_square=PC_pattern_Astro;
+
+if Settings_CorX.SquareCrop == 1
+    PC_square_x= (PC_pattern_Astro(1)*PatternInfo.ScreenWidth-(PatternInfo.ScreenWidth-PatternInfo.ScreenHeight)/2)/(PatternInfo.ScreenHeight);
+    PC_square(1)=PC_square_x;
+end
+
+%prepare the experimental pattern for refinement
+[Pat_Ref_r,XCF_data_fill] = refine_prep(Pat_exp_cor,SettingsXCF_noH,RTM);
+[EBSD_geom ] = EBSP_Gnom( RTM,PC_square); %you can change PC_in if you want
+[G_Refined,regout_R] = refine5(Pat_Ref_r,EBSD_geom,EBSD_geom.PC,G_start,SettingsXCF_noH,screen_int,RTM_info.isHex,RTM);
+regout_R(4)
+% refined_R_out(:,pattern_number)=regout_R(4);
+% refined_G_out(:,:,pattern_number)=G_Refined;
+
+
+%check the answer
+
+[Pat_Sim_In]=EBSP_gen( EBSD_geom,G_start,screen_int);
+[Pat_Sim_Ref]=EBSP_gen( EBSD_geom,G_Refined,screen_int);
+
+figure;
+subplot(1,3,1); pPattern(Pat_exp_cor,EBSD_geom); title('exp');
+subplot(1,3,2); pPattern(Pat_Sim_In,EBSD_geom); title('sim in');
+subplot(1,3,3); pPattern(Pat_Sim_Ref,EBSD_geom); title('sim ref');

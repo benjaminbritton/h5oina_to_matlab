@@ -11,15 +11,15 @@ setMTEXpref('xAxisDirection','east');           %aztec
 setMTEXpref('zAxisDirection','outofPlane');     %aztec
 
 %% File locations
-fullfile1 = 'C:\Users\rmb07\OneDrive - UBC\7 - Projects\7 - Mg slices\WBV - shared\Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161.h5oina'; %location of original h5oina file
-fullfile2 = 'C:\Users\rmb07\OneDrive - UBC\7 - Projects\7 - Mg slices\WBV - shared\Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161-PatternMatching.h5oina'; %location of pattern matched h5oina file
+fullfile1 = 'E:\Ruth\h5oina\1mm map Specimen 1 Site 1 Map Data 1-Subset 1.h5oina'; %location of original h5oina file
+fullfile2 = 'E:\Ruth\h5oina\1mm map Specimen 1 Site 1 Map Data 1-Subset 1-PatternMatching.h5oina'; %location of pattern matched h5oina file
 
 %% Load data - pattern matched
 
 % Load data - pattern matched
 [ebsd_o,~,opt_o] = loadEBSD_h5oina_getopt(fullfile1);
-[ebsd1,ebsd,~,~,MSdata2] = loadEBSD_h5oina_PatMatch(fullfile2,opt_o) ;
-
+[ebsd1,ebsd,~,MSdata2] = loadEBSD_h5oina_PatMatch(fullfile2,ebsd_o,opt_o) ;
+% ebsdDP,EBSDdata,DPdata1,DPdata3
 % sort extra parts
 ebsd.prop.CrossCorr=MSdata2.Cross_Correlation_Coefficient;
 ebsd.prop.Band_Contrast=ebsd1.prop.Band_Contrast;
