@@ -125,13 +125,23 @@ end
     hdf5write(fileLoc.HDF5FullFile,data_name,m,'writemode','append');
 
     %X [A]
-    m=array_change2(ebsd.prop.OI_X); %capital - and playing nice with the updated loader
+    if isfield(ebsd.prop,'OI_X') == 1
+        m=array_change2(ebsd.prop.OI_X); %capital - and playing nice with the updated loader
+    else
+        m=array_change2(ebsd.prop.X); %capital - and playing nice with the updated loader
+    end
+%     m=array_change2(ebsd.prop.x);
     data_name=['/' fileLoc.DataName dtype 'X'];
     hdf5write(fileLoc.HDF5FullFile,data_name,m,'writemode','append');
         h5writeatt( fileLoc.HDF5FullFile ,data_name , 'Unit' , 'um' );
 
     %Y [A]
-    m=array_change2(ebsd.prop.OI_Y); %capital - and playing nice with the updated loader
+      if isfield(ebsd.prop,'OI_Y') == 1
+        m=array_change2(ebsd.prop.OI_Y); %capital - and playing nice with the updated loader
+    else
+        m=array_change2(ebsd.prop.Y); %capital - and playing nice with the updated loader
+      end
+%     m=array_change2(ebsd.prop.y);
     data_name=['/' fileLoc.DataName dtype 'Y'];
     hdf5write(fileLoc.HDF5FullFile,data_name,m,'writemode','append');
     h5writeatt( fileLoc.HDF5FullFile ,data_name , 'Unit' , 'um' );

@@ -332,7 +332,7 @@ ebsdDP.prop.CrossCorr=DPdata3.Cross_Correlation_Coefficient;
 ebsdDP.prop.Band_Contrast=ebsdOrig.prop.Band_Contrast;
 ebsdDP.prop.Band_Slope=ebsdOrig.prop.Band_Slope;
 ebsdDP.prop.Pattern_Quality=ebsdOrig.prop.Pattern_Quality;
-ebsdDP.prop.X=ebsdOrig.prop.X;
-ebsdDP.prop.Y=ebsdOrig.prop.Y;
+ebsdDP.prop.OI_X=ebsdOrig.prop.OI_X;
+ebsdDP.prop.OI_Y=ebsdOrig.prop.OI_Y;
 
 end
