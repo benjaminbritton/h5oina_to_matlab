@@ -14,15 +14,21 @@ home
 % e.g. fname_slice_data='Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161';
 % fname_slice_data='MS_Slices_101-120_XZplane_Yheight_16_5';
 
-% fname_folder='E:\SiMaps2\h5oina';
+% fname_folder='E:\SiMaps2\h5oina\';
 % fname_slice_data='Si_Patterns_32x32 Si StepSize5_160x160um Resolution_SS5';
+% fname_folder='E:\SiMaps2\h5oina_test\';
+% fname_slice_data='Si_Patterns_32x32 Si StepSize5_160x160um Resolution_SS5_out';
 % phase_plot='Silicon';
 
-% Pick your phase
-fname_folder='E:\Mg_voilume\analysed\';
-fname_slice_data='Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161';
-phase_plot='Magnesium';
+% % Pick your phase
+% fname_folder='E:\Mg_voilume\analysed\';
+% fname_slice_data='Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161';
+% phase_plot='Magnesium';
 
+% Test
+fname_folder='E:\Mg_voilume\analysed\MATLAB outputs\';
+fname_slice_data='MS_Slices_81-254_height_5_new';
+phase_plot='Magnesium';
 
 %%
 % astro_location='C:\Users\benja\OneDrive\Documents\Github\AstroEBSD_v2'; %working with 5.8.1
@@ -129,63 +135,63 @@ colorbar;
 
 %%
 
-%%
-figure;
-plot(ebsd_patternmatched,ebsd_patternmatched.prop.Band_Contrast,'micronbar','off');
-%%
-figure;
-s_bc=subplot(3,3,5);
-plot(ebsd_patternmatched,ebsd_patternmatched.prop.Band_Contrast,'micronbar','on','parent',s_bc);
-title('BC');
-hold on;
-indexlist(1)=sub2ind([32 32],1,1); %[X_num,Y_num,row,col] - col = x position, row = y position
-indexlist(2)=sub2ind([32 32],32,1); %[X_num,Y_num,row,col]
-indexlist(3)=sub2ind([32 32],1,32); %[X_num,Y_num,row,col]
-indexlist(4)=sub2ind([32 32],32,32); %[X_num,Y_num,row,col]
-
-%make sure the index list is the same size as the colours & locations in
-%the plot
-ind_loc=[1,3,7,9];
-ind_col={'r','g','b','m'};
-
-
-PC_x_array=ebsd_patternmatched.prop.Pattern_Center_X;
-PC_y_array=ebsd_patternmatched.prop.Pattern_Center_Y;
-PC_z_array=ebsd_patternmatched.prop.Detector_Distance;
-
-PatData.ScreenWidth=    double(dataset_header.Pattern_Width);
-PatData.ScreenHeight=    double(dataset_header.Pattern_Height);
-
-for n=1:numel(indexlist)
-    s_pat=subplot(3,3,ind_loc(n));
-    pattern_number=indexlist(n);
-    PC_pattern_OI=[PC_x_array(pattern_number), PC_y_array(pattern_number) ,PC_z_array(pattern_number)];
-    [PC_pattern_Astro,PatternInfo] = PC_OI_to_Astro(PC_pattern_OI,dataset_header);
-    [EBSD_geom ] = EBSP_Gnom( PatData,PC_pattern_Astro); %you can change PC_in if you want
-    [Pat_Exp]=loadEBSP_T(h5_original,dataset_header,pattern_number);
-    pPattern(Pat_Exp,EBSD_geom,s_pat); hold on;
-    plot(EBSD_geom.x_screen,EBSD_geom.y_screen(1)*ones(size(EBSD_geom.x_screen)),'Color',ind_col{n},'LineWidth',3);
-    plot(EBSD_geom.x_screen,EBSD_geom.y_screen(end)*ones(size(EBSD_geom.x_screen)),'Color',ind_col{n},'LineWidth',3);
-
-    plot(EBSD_geom.x_screen(1)*ones(size(EBSD_geom.y_screen)),EBSD_geom.y_screen,'Color',ind_col{n},'LineWidth',3);
-    plot(EBSD_geom.x_screen(end)*ones(size(EBSD_geom.y_screen)),EBSD_geom.y_screen,'Color',ind_col{n},'LineWidth',3);
-
-    mh=mean(EBSD_geom.y_screen);
-    plot(EBSD_geom.x_screen,mh*ones(size(EBSD_geom.x_screen)),'Color',ind_col{n},'LineWidth',1,'LineStyle','-');
-     mv=mean(EBSD_geom.x_screen);
-    plot(mv*ones(size(EBSD_geom.y_screen)),EBSD_geom.y_screen,'Color',ind_col{n},'LineWidth',1,'LineStyle','-');
-
-
-    scatter(ebsd_patternmatched(indexlist(n)).prop.x,ebsd_patternmatched(indexlist(n)).prop.y,'parent',s_bc,'MarkerEdgeColor',ind_col{n});
-end
-
-% indexlist=[1,32,1024-32+1,1024]
-
-%%
-odf = calcDensity(ebsd_patternmatched(phase_plot).orientations);
-h = [Miller(0,0,0,1,odf.CS),Miller(1,1,-2,0,odf.CS),Miller(1,0,-1,0,odf.CS)];
-figure;
-plotPDF(odf,h,'antipodal','silent','grid','upper','projection','eangle','grid_res',10*degree)
+% % %%
+% % figure;
+% % plot(ebsd_patternmatched,ebsd_patternmatched.prop.Band_Contrast,'micronbar','off');
+% % %%
+% % figure;
+% % s_bc=subplot(3,3,5);
+% % plot(ebsd_patternmatched,ebsd_patternmatched.prop.Band_Contrast,'micronbar','on','parent',s_bc);
+% % title('BC');
+% % hold on;
+% % indexlist(1)=sub2ind([32 32],1,1); %[X_num,Y_num,row,col] - col = x position, row = y position
+% % indexlist(2)=sub2ind([32 32],32,1); %[X_num,Y_num,row,col]
+% % indexlist(3)=sub2ind([32 32],1,32); %[X_num,Y_num,row,col]
+% % indexlist(4)=sub2ind([32 32],32,32); %[X_num,Y_num,row,col]
+% % 
+% % %make sure the index list is the same size as the colours & locations in
+% % %the plot
+% % ind_loc=[1,3,7,9];
+% % ind_col={'r','g','b','m'};
+% % 
+% % 
+% % PC_x_array=ebsd_patternmatched.prop.Pattern_Center_X;
+% % PC_y_array=ebsd_patternmatched.prop.Pattern_Center_Y;
+% % PC_z_array=ebsd_patternmatched.prop.Detector_Distance;
+% % 
+% % PatData.ScreenWidth=    double(dataset_header.Pattern_Width);
+% % PatData.ScreenHeight=    double(dataset_header.Pattern_Height);
+% % 
+% % for n=1:numel(indexlist)
+% %     s_pat=subplot(3,3,ind_loc(n));
+% %     pattern_number=indexlist(n);
+% %     PC_pattern_OI=[PC_x_array(pattern_number), PC_y_array(pattern_number) ,PC_z_array(pattern_number)];
+% %     [PC_pattern_Astro,PatternInfo] = PC_OI_to_Astro(PC_pattern_OI,dataset_header);
+% %     [EBSD_geom ] = EBSP_Gnom( PatData,PC_pattern_Astro); %you can change PC_in if you want
+% %     [Pat_Exp]=loadEBSP_T(h5_original,dataset_header,pattern_number);
+% %     pPattern(Pat_Exp,EBSD_geom,s_pat); hold on;
+% %     plot(EBSD_geom.x_screen,EBSD_geom.y_screen(1)*ones(size(EBSD_geom.x_screen)),'Color',ind_col{n},'LineWidth',3);
+% %     plot(EBSD_geom.x_screen,EBSD_geom.y_screen(end)*ones(size(EBSD_geom.x_screen)),'Color',ind_col{n},'LineWidth',3);
+% % 
+% %     plot(EBSD_geom.x_screen(1)*ones(size(EBSD_geom.y_screen)),EBSD_geom.y_screen,'Color',ind_col{n},'LineWidth',3);
+% %     plot(EBSD_geom.x_screen(end)*ones(size(EBSD_geom.y_screen)),EBSD_geom.y_screen,'Color',ind_col{n},'LineWidth',3);
+% % 
+% %     mh=mean(EBSD_geom.y_screen);
+% %     plot(EBSD_geom.x_screen,mh*ones(size(EBSD_geom.x_screen)),'Color',ind_col{n},'LineWidth',1,'LineStyle','-');
+% %      mv=mean(EBSD_geom.x_screen);
+% %     plot(mv*ones(size(EBSD_geom.y_screen)),EBSD_geom.y_screen,'Color',ind_col{n},'LineWidth',1,'LineStyle','-');
+% % 
+% % 
+% %     scatter(ebsd_patternmatched(indexlist(n)).prop.x,ebsd_patternmatched(indexlist(n)).prop.y,'parent',s_bc,'MarkerEdgeColor',ind_col{n});
+% % end
+% % 
+% % % indexlist=[1,32,1024-32+1,1024]
+% % 
+% % %%
+% % odf = calcDensity(ebsd_patternmatched(phase_plot).orientations);
+% % h = [Miller(0,0,0,1,odf.CS),Miller(1,1,-2,0,odf.CS),Miller(1,0,-1,0,odf.CS)];
+% % figure;
+% % plotPDF(odf,h,'antipodal','silent','grid','upper','projection','eangle','grid_res',10*degree)
 
 %% write this to a h5 file
 fout_folder=[fname_folder(1:end-1) '_test'];
