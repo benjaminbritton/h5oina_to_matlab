@@ -1,20 +1,28 @@
+close all
+clear
+home
 %folder that contains the h5oina files, 
 % % e.g. fname_folder='C:\Users\benja\OneDrive\Documents\MATLAB\h5oina';
 % fname_folder='C:\Users\benja\OneDrive\Documents\MATLAB\h5oina';
 % fname_folder='H:\Ben';
 % fname_folder='E:\Mg_voilume\analysed\MATLAB outputs';
-fname_folder='E:\SiMaps2\h5oina';
+
+
 
 %h5oina file, excluding final file extension & folder
 %if the '-PatternMatched' version exists, the script will also load that data
 % e.g. fname_slice_data='Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161';
-% fname_slice_data='Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161';
-% fname_slice_data='MS_Slices_81-254_XZplane_Yheight_16';
-fname_slice_data='Si_Patterns_32x32 Si StepSize5_160x160um Resolution_SS5';
+% fname_slice_data='MS_Slices_101-120_XZplane_Yheight_16_5';
 
-%Pick your phase
-% phase_plot='Magnesium';
-phase_plot='Silicon';
+% fname_folder='E:\SiMaps2\h5oina';
+% fname_slice_data='Si_Patterns_32x32 Si StepSize5_160x160um Resolution_SS5';
+% phase_plot='Silicon';
+
+% Pick your phase
+fname_folder='E:\Mg_voilume\analysed\';
+fname_slice_data='Mg 1 Specimen 1 SLICE_0156 SLICE_0156 161';
+phase_plot='Magnesium';
+
 
 %%
 % astro_location='C:\Users\benja\OneDrive\Documents\Github\AstroEBSD_v2'; %working with 5.8.1
@@ -26,7 +34,7 @@ astro_location='C:\Users\rmb07\Documents\GitHub\AstroEBSD_v2';
 % mtex_location='C:\Users\benja\OneDrive\Documents\MATLAB\mtex-5.8.1'; %working with 5.8.1
 mtex_location='H:\MTEX\mtex-5.8.1'; %working with 5.8.1
 
-%if you are going to pattern match - you need this loaded
+%if you are going to pattern match - you need this loadedat
 % run(fullfile(InputUser.Astro_loc,"start_AstroEBSD.m"));
 RTM.Phase_Folder = fullfile(astro_location,'phases'); %location of the AstroEBSD phases super-folder
 
@@ -41,8 +49,8 @@ nextAxis
 plot(ebsd_patternmatched,ebsd_patternmatched.orientations);
 
 %%
-% figure;
-% plot(ebsd_patternmatched,ebsd_patternmatched.orientations);
+figure;
+plot(ebsd_patternmatched,ebsd_patternmatched.orientations);
 
 oM_H=ipfHSVKey(ebsd_patternmatched(phase_plot).CS);
 
@@ -74,47 +82,47 @@ nextAxis;
 
 %%
 figure;
-s1=subplot(4,3,1);
+s1=subplot(3,3,1);
 plot(ebsd_patternmatched,ebsd_patternmatched.prop.Beam_Position_X,'micronbar','on','parent',s1);
 title('Beam X')
 colorbar;
 
-s2=subplot(4,3,2);
+s2=subplot(3,3,2);
 plot(ebsd_patternmatched,ebsd_patternmatched.prop.Beam_Position_Y,'micronbar','on','parent',s2);
 title('Beam Y')
 colorbar;
 
-s4=subplot(4,3,4);
-plot(ebsd_patternmatched,ebsd_patternmatched.prop.X,'micronbar','on','parent',s4);
-title('X')
-colorbar;
+% s4=subplot(4,3,4);
+% plot(ebsd_patternmatched,ebsd_patternmatched.prop.X,'micronbar','on','parent',s4);
+% title('X')
+% colorbar;
+% 
+% s5=subplot(4,3,5);
+% plot(ebsd_patternmatched,ebsd_patternmatched.prop.Y,'micronbar','on','parent',s5);
+% title('Y')
+% colorbar;
 
-s5=subplot(4,3,5);
-plot(ebsd_patternmatched,ebsd_patternmatched.prop.Y,'micronbar','on','parent',s5);
-title('Y')
-colorbar;
-
-s7=subplot(4,3,7);
+s7=subplot(3,3,4);
 plot(ebsd_patternmatched,ebsd_patternmatched.prop.x,'micronbar','on','parent',s7);
-title('x')
+title('position x')
 colorbar;
 
-s8=subplot(4,3,8);
+s8=subplot(3,3,5);
 plot(ebsd_patternmatched,ebsd_patternmatched.prop.y,'micronbar','on','parent',s8);
-title('y')
+title('position y')
 colorbar;
 
-s10=subplot(4,3,10);
+s10=subplot(3,3,7);
 plot(ebsd_patternmatched,ebsd_patternmatched.prop.Pattern_Center_X,'micronbar','on','parent',s10);
 title('PC_X')
 colorbar;
 
-s11=subplot(4,3,11);
+s11=subplot(3,3,8);
 plot(ebsd_patternmatched,ebsd_patternmatched.prop.Pattern_Center_Y,'micronbar','on','parent',s11);
 title('PC_Y')
 colorbar;
 
-s12=subplot(4,3,12);
+s12=subplot(3,3,9);
 plot(ebsd_patternmatched,ebsd_patternmatched.prop.Detector_Distance,'micronbar','on','parent',s12);
 title('DD')
 colorbar;
@@ -172,3 +180,18 @@ for n=1:numel(indexlist)
 end
 
 % indexlist=[1,32,1024-32+1,1024]
+
+%%
+odf = calcDensity(ebsd_patternmatched(phase_plot).orientations);
+h = [Miller(0,0,0,1,odf.CS),Miller(1,1,-2,0,odf.CS),Miller(1,0,-1,0,odf.CS)];
+figure;
+plotPDF(odf,h,'antipodal','silent','grid','upper','projection','eangle','grid_res',10*degree)
+
+%% write this to a h5 file
+fout_folder=[fname_folder(1:end-1) '_test'];
+fout_fname=[fname_slice_data '_out.h5oina'];
+
+fout_full=struct;
+fout_full.HDF5FullFile=fullfile(fout_folder,fout_fname);
+fout_full.DataName='1'; 
+fwriteh5oina_v2_short(fout_full,ebsd_patternmatched,dataset_header);

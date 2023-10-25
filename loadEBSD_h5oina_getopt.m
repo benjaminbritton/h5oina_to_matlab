@@ -176,11 +176,20 @@ for k = 1 :length(EBSD_index) % TODO: find a good way to write out multiple data
     opt.x=opt.Beam_Position_X;
     opt.y=opt.Beam_Position_Y;
 
-    %    opt.x=opt.X;
+%        opt.x=opt.X;
 %     opt.y=opt.Y;
+ 
+%this step makes it less confusing for us when we consider the coordinate
+%grid - which is given in 'small' x and y, not 'big' X and Y
+%
+%but we want to keep these values as we need them if we want to make a new
+%h5oina data set from this container
 
-%     opt=rmfield(opt,'X');
-%     opt=rmfield(opt,'Y');
+    opt.OI_X=opt.X;
+    opt.OI_Y=opt.Y;
+    
+    opt=rmfield(opt,'X');
+    opt=rmfield(opt,'Y');
 
 %     opt.bc = EBSDdata.Band_Contrast;
 %     opt.bs = EBSDdata.Band_Slope;
@@ -196,7 +205,10 @@ for k = 1 :length(EBSD_index) % TODO: find a good way to write out multiple data
         end
     end
         
-    ebsdtemp = EBSD(rot,phase,CS,opt,'unitCell',calcUnitCell([opt.x,opt.y]));
+%     ebsdtemp =
+%     EBSD(rot,phase,CS,opt,'unitCell',calcUnitCell([opt.x,opt.y])); 
+% not sure why the unit cell option is needed, removing for now
+    ebsdtemp = EBSD(rot,phase,CS,opt);
     ebsdtemp.opt.Header = EBSDheader;
     
     if length(EBSD_index) > 1
